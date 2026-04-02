@@ -534,30 +534,54 @@
   // Recording
   function startRecording() {
     goTo('screen-recording');
-    document.getElementById('record-video').srcObject = stream;
+
+    const recordVideo = document.getElementById('record-video');
+    recordVideo.srcObject = stream;
     document.getElementById('record-name-label').textContent = guestName + ' 님, 촬영 중입니다';
 
+    // 지원 mimeType 자동 감지 (아이패드 대응)
+    const mimeType = MediaRecorder.isTypeSupported('video/webm;codecs=vp8')
+      ? 'video/webm;codecs=vp8'
+      : MediaRecorder.isTypeSupported('video/webm')
+      ? 'video/webm'
+      : MediaRecorder.isTypeSupported('video/mp4')
+      ? 'video/mp4'
+      : '';
+
     recordedChunks = [];
-    mediaRecorder = new MediaRecorder(stream, { mimeType: 'video/webm' });
+    mediaRecorder = new MediaRecorder(stream, mimeType ? { mimeType } : {});
     mediaRecorder.ondataavailable = e => { if (e.data.size > 0) recordedChunks.push(e.data); };
     mediaRecorder.onstop = showResult;
-    mediaRecorder.start();
 
-    let elapsed = 0;
-    const total = selectedTimer;
-    document.getElementById('record-count').textContent = total;
-    document.getElementById('timer-bar').style.width = '100%';
+    function beginTimer() {
+      mediaRecorder.start();
+      let elapsed = 0;
+      const total = selectedTimer;
+      document.getElementById('record-count').textContent = total;
+      document.getElementById('timer-bar').style.width = '100%';
 
-    recordInterval = setInterval(() => {
-      elapsed++;
-      const remaining = total - elapsed;
-      document.getElementById('record-count').textContent = remaining;
-      document.getElementById('timer-bar').style.width = ((remaining / total) * 100) + '%';
-      if (remaining <= 0) {
-        clearInterval(recordInterval);
-        mediaRecorder.stop();
-      }
-    }, 1000);
+      recordInterval = setInterval(() => {
+        elapsed++;
+        const remaining = total - elapsed;
+        document.getElementById('record-count').textContent = remaining;
+        document.getElementById('timer-bar').style.width = ((remaining / total) * 100) + '%';
+        if (remaining <= 0) {
+          clearInterval(recordInterval);
+          mediaRecorder.stop();
+        }
+      }, 1000);
+    }
+
+    // stream 연결 후 play 확인하고 녹화 시작
+    if (recordVideo.readyState >= 2) {
+      recordVideo.play();
+      beginTimer();
+    } else {
+      recordVideo.onloadedmetadata = () => {
+        recordVideo.play();
+        beginTimer();
+      };
+    }
   }
 
   // Result
