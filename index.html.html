@@ -586,18 +586,33 @@
 
   // Result
   function showResult() {
-    const blob = new Blob(recordedChunks, { type: 'video/webm' });
+    // 녹화된 실제 mimeType으로 blob 생성
+    const recordedMime = mediaRecorder.mimeType || 'video/webm';
+    const blob = new Blob(recordedChunks, { type: recordedMime });
     const url = URL.createObjectURL(blob);
-    const resultVideo = document.getElementById('result-video');
-    resultVideo.src = url;
-    resultVideo.srcObject = null;
 
-    // Store for download
     window._recordedBlob = blob;
     window._recordedUrl = url;
+    window._recordedMime = recordedMime;
 
     goTo('screen-result');
-    resultVideo.play();
+
+    const resultVideo = document.getElementById('result-video');
+    resultVideo.srcObject = null;
+    resultVideo.src = url;
+    resultVideo.muted = false;
+
+    resultVideo.onloadedmetadata = () => {
+      resultVideo.play().catch(() => {});
+    };
+
+    // 아이패드 대비 약간의 딜레이 후 재시도
+    setTimeout(() => {
+      if (resultVideo.paused) {
+        resultVideo.load();
+        resultVideo.play().catch(() => {});
+      }
+    }, 500);
   }
 
   // Retake
@@ -609,9 +624,10 @@
   // Submit
   function submit() {
     document.getElementById('complete-name').textContent = guestName + ' 님';
+    const ext = (window._recordedMime || '').includes('mp4') ? 'mp4' : 'webm';
     const link = document.getElementById('download-link');
     link.href = window._recordedUrl;
-    link.download = guestName + '_웨딩영상.webm';
+    link.download = guestName + '_웨딩영상.' + ext;
     goTo('screen-complete');
     stopStream();
   }
