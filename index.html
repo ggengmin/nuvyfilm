@@ -216,8 +216,8 @@
   /* Camera / Preview */
   #camera-container {
     position: relative;
-    width: min(340px, 90vw);
-    height: min(260px, 55vw);
+    width: min(600px, 92vw);
+    height: min(480px, 70vw);
     overflow: hidden;
     border: 1px solid rgba(201,169,110,0.3);
   }
@@ -341,8 +341,8 @@
   <div class="corner corner-br"></div>
 
   <div class="gap-16">
-    <p class="subtitle">2025 · 06 · 14</p>
-    <div class="display">김민준 & 이서연</div>
+    <p class="subtitle">2025 · 05 · 23</p>
+    <div class="display">이형희 & 장수용</div>
     <div class="ornament"><span>♡</span></div>
     <p class="subtitle">소중한 축하 한마디를<br>영상으로 남겨주세요</p>
     <button class="btn-primary mt-24" onclick="goTo('screen-name')">시작하기</button>
@@ -381,11 +381,11 @@
     </div>
     <div class="ornament"><span>✦</span></div>
     <div class="timer-options">
-      <button class="timer-btn" id="t15" onclick="selectTimer(15)">
-        15<span>초</span>
+      <button class="timer-btn" id="t15" onclick="selectTimer(10)">
+        10<span>초</span>
       </button>
-      <button class="timer-btn" id="t30" onclick="selectTimer(30)">
-        30<span>초</span>
+      <button class="timer-btn" id="t30" onclick="selectTimer(15)">
+        15<span>초</span>
       </button>
     </div>
     <button class="btn-primary mt-8" id="timer-next-btn" onclick="goToPreview()" style="opacity:0.3;pointer-events:none">다음</button>
@@ -465,9 +465,12 @@
       <p class="couple-names">김민준 · 이서연의 결혼을 축하해주셔서 감사합니다</p>
     </div>
     <div class="ornament"><span>♡</span></div>
-    <div class="qr-box">
+    <!-- <div class="qr-box">
       <span>QR 코드<br>준비 중</span>
-    </div>
+    </div> -->
+    <p class="subtitle" style="text-align:center; line-height:2.2">
+      형희 & 수용님께<br>소중한 영상을 전달해드리겠습니다<br>축하해주셔서 감사합니다 💌
+    </p>
     <a id="download-link" class="btn-primary mt-8" download="wedding-video.webm">영상 저장하기</a>
     <button class="btn-ghost" onclick="restart()">처음으로 돌아가기</button>
   </div>
